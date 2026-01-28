@@ -1,0 +1,109 @@
+
+<project name="blackjack" default="run" basedir=".">
+
+    <!-- ==================== Properties ==================== -->
+    <property name="app.name" value="blackjack"/>
+    <property name="app.version" value="0.1"/>
+    <property name="app.fullname" value="${app.name}-${app.version}"/>
+
+    <property name="build.home" value="${basedir}/build"/>
+    <property name="build.test.home" value="${basedir}/build/test"/>
+    <property name="dist.home" value="${basedir}/dist"/>
+    <property name="docs.home" value="${basedir}/docs"/>
+    <property name="src.home" value="${basedir}/src"/>
+    <property name="src.test.home" value="${basedir}/test"/>
+    <property name="test.report.home" value="${basedir}/build/test/results"/>
+    <property name="lib.home" value="${basedir}/lib"/>
+    <property name="javac.encoding" value="UTF-8"/>
+
+    <property name="compile.debug" value="true"/>
+    <property name="compile.deprecation" value="false"/>
+    <property name="compile.optimize" value="true"/>
+
+    <!-- ==================== Classpath ==================== -->
+    <path id="compile.classpath">
+        <fileset dir="${lib.home}">
+            <include name="**/*.jar"/>
+        </fileset>
+    </path>
+
+    <!-- ==================== Clean ==================== -->
+    <target name="clean">
+        <delete dir="${build.home}"/>
+        <delete dir="${build.test.home}"/>
+        <delete dir="${dist.home}"/>
+        <delete dir="${test.report.home}"/>
+    </target>
+
+    <!-- ==================== Prepare ==================== -->
+    <target name="prepare">
+        <mkdir dir="${build.home}"/>
+        <mkdir dir="${build.test.home}"/>
+        <mkdir dir="${dist.home}"/>
+        <mkdir dir="${test.report.home}"/>
+    </target>
+
+    <!-- ==================== Compile ==================== -->
+    <target name="compile" depends="prepare">
+        <javac srcdir="${src.home}" 
+               destdir="${build.home}"
+               encoding="${javac.encoding}"
+               debug="${compile.debug}"
+               optimize="${compile.optimize}"
+               deprecation="${compile.deprecation}"
+               includeantruntime="false">
+            <classpath refid="compile.classpath"/>
+        </javac>
+
+        <!-- Copy non-Java resources -->
+        <copy todir="${build.home}">
+            <fileset dir="${src.home}" excludes="**/*.java"/>
+        </copy>
+    </target>
+
+    <!-- ==================== Dist ==================== -->
+    <target name="dist" depends="clean,compile,javadoc">
+        <copy todir="${dist.home}/lib">
+            <fileset dir="${lib.home}"/>
+        </copy>
+
+        <!-- Create JAR -->
+        <jar jarfile="${dist.home}/${app.fullname}.jar" basedir="${build.home}">
+            <manifest>
+                <attribute name="Main-Class" value="blackjack.MainClass"/>
+                <!-- Ajouter cartes.jar dans le classpath -->
+                <attribute name="Class-Path" value="lib/cartes-0.1.jar"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <!-- ==================== Javadoc ==================== -->
+    <target name="javadoc" depends="compile">
+        <mkdir dir="${dist.home}/docs/api"/>
+        <javadoc sourcepath="${src.home}" destdir="${dist.home}/docs/api" packagenames="*">
+            <classpath refid="compile.classpath"/>
+        </javadoc>
+    </target>
+
+    <!-- ==================== Run ==================== -->
+    <target name="run" depends="dist">
+        <java jar="${dist.home}/${app.fullname}.jar" fork="true"/>
+    </target>
+    <!-- ==================== Test ==================== -->
+	<target name="test" depends="compile">
+	    <java classname="blackjack.test.Test" fork="true">
+	        <classpath>
+	            <pathelement location="${build.home}"/>
+	            <path refid="compile.classpath"/>
+	        </classpath>
+	    </java>
+	</target>
+
+    <!-- ==================== Run English ==================== -->
+    <target name="run-english" depends="dist">
+        <java jar="${dist.home}/${app.fullname}.jar" fork="true">
+            <jvmarg value="-Duser.language=en"/>
+        </java>
+    </target>
+
+</project>
