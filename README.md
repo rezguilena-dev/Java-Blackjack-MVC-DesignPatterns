@@ -2,6 +2,7 @@
 ![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=java&logoColor=white)
 ![Build](https://img.shields.io/badge/Build-Apache_Ant-A81C07?style=for-the-badge&logo=apache-ant&logoColor=white)
 ![Design Patterns](https://img.shields.io/badge/Design_Patterns-blue?style=for-the-badge)
+![Status](https://img.shields.io/badge/Status-Finished-brightgreen?style=for-the-badge)
 
 > **Projet : Méthodes de Conception (L3 Informatique)** > *Université de Caen Normandie — 2025-2026*
 
